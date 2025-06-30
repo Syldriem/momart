@@ -18,35 +18,17 @@ function App() {
 
   onMount(() => {
     if (token()) {
-      setIsAdmin(true);
+      setIsAdmin(false);
     }
   });
 
-  const login = async (password) => {
-    try {
-      const response = await fetch(`${API_BASE}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        setToken(data.token);
-        localStorage.setItem("token", data.token);
-        setIsAdmin(true);
-        return true;
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-    return false;
-  };
 
   const logout = () => {
     setToken("");
     localStorage.removeItem("token");
     setIsAdmin(false);
+    window.location.href = '/login';
   };
 
   return (
@@ -71,48 +53,9 @@ function App() {
           position: relative;
         }
 
-        .admin-toggle {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          z-index: 1000;
-          background: rgba(0, 0, 0, 0.8);
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+        
 
-        .login-form {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: white;
-          padding: 30px;
-          border-radius: 10px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-          z-index: 1001;
-        }
-
-        .login-form input {
-          width: 100%;
-          padding: 10px;
-          margin: 10px 0;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-        }
-
-        .login-form button {
-          width: 100%;
-          padding: 10px;
-          background: #007bff;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+        
       `}</style>
 
       {settings() && (
@@ -121,7 +64,7 @@ function App() {
         </style>
       )}
 
-      {!isAdmin() && !token() && <LoginForm onLogin={login} />}
+      
 
       {isAdmin() && (
         <button class="admin-toggle" onClick={logout}>
@@ -143,32 +86,12 @@ function App() {
           onToggleView={() => setIsAdmin(false)}
         />
       ) : (
-        <RegularView media={media} settings={settings} />
+        <RegularView media={media} settings={settings} onToggleView={token() ? () => setIsAdmin(true) : () => {}} />
       )}
     </div>
   );
 }
 
-function LoginForm({ onLogin }) {
-  const [password, setPassword] = createSignal("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await onLogin(password());
-  };
-
-  return (
-    <form class="login-form" onSubmit={handleSubmit}>
-      <h2>Admin Login</h2>
-      <input
-        type="password"
-        placeholder="Password"
-        value={password()}
-        onInput={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
-  );
-}
 
 export default App;

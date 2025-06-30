@@ -1,7 +1,7 @@
 import MediaGrid from "./MediaGrid";
 import Navigation from "./Navigation";
 
-function RegularView({ media, settings }) {
+function RegularView({ media, settings, onToggleView }) {
   return (
     <div class="regular-view">
       <style>{`
@@ -37,7 +37,26 @@ function RegularView({ media, settings }) {
           padding: 40px 20px;
           background: rgba(255, 255, 255, 0.9);
         }
+
+        .admin-toggle {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
       `}</style>
+
+      {onToggleView.toString() !== '() => {}' && (
+        <button class="admin-toggle" onClick={onToggleView}>
+          Admin View
+        </button>
+      )}
 
       <div class="hero-section">
         <div class="hero-content">
